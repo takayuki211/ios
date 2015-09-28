@@ -10,6 +10,8 @@
 
 @interface ViewController : UIViewController
 
+- (IBAction)scanButton:(id)sender;
+- (IBAction)stopButton:(id)sender;
 
 @end
 

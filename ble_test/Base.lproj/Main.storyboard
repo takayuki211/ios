@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
     </dependencies>
     <scenes>
@@ -20,14 +19,24 @@
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2Ox-FQ-hAS">
                                 <rect key="frame" x="0.0" y="556" width="600" height="44"/>
                                 <items>
-                                    <barButtonItem title="Scan" id="5ZZ-tI-HgQ">
+                                    <barButtonItem title="Connect" id="5ZZ-tI-HgQ">
                                         <connections>
                                             <action selector="scanButton:" destination="vXZ-lx-hvc" id="2dv-LU-79k"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="Stop" id="zkS-lz-p9w">
+                                    <barButtonItem title="Disconnect" id="zkS-lz-p9w">
                                         <connections>
                                             <action selector="stopButton:" destination="vXZ-lx-hvc" id="nA4-Z9-gTa"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem title="HIGH" id="38r-v5-Ppf">
+                                        <connections>
+                                            <action selector="sendHigh:" destination="vXZ-lx-hvc" id="1dK-yT-UeT"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem title="LOW" id="GS6-0K-kqT">
+                                        <connections>
+                                            <action selector="sendLow:" destination="vXZ-lx-hvc" id="C4W-t1-KCO"/>
                                         </connections>
                                     </barButtonItem>
                                 </items>

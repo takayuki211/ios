@@ -7,6 +7,8 @@
 //
 
 #define UUID_BLESERIAL2 @"BD011F22-7D3C-0DB6-E441-55873D44EF40"
+#define UUID_TX @"2a750d7d-bd9a-928f-b744-7d5a70cef1f9" //RX
+#define UUID_RX	@"0503b819-c75b-ba9b-3641-6a7f338dd9bd" //TX
 
 #import "ViewController.h"
 
@@ -15,7 +17,8 @@
 @interface ViewController () <CBCentralManagerDelegate, CBPeripheralDelegate>
 @property (nonatomic, strong) CBCentralManager *centralManager;
 @property (nonatomic, strong) CBPeripheral *peripheral;
-
+@property (nonatomic, strong) CBCharacteristic *txcharacteristic;
+@property (nonatomic, strong) CBCharacteristic *rxcharacteristic;
 @end
 
 @implementation ViewController
@@ -117,11 +120,22 @@ didDiscoverCharacteristicsForService:(CBService *)service
     NSArray *characteristics = service.characteristics;
     NSLog(@"%lu 個のキャラクタリスティックを発見！%@", (unsigned long)characteristics.count, characteristics);
     
+    // キャラクタリスティックを確保する
     for(CBCharacteristic *characteristic in characteristics){
-        // プロパティがReadのとき読み出し開始
-        if(characteristic.properties == CBCharacteristicPropertyRead){
-            NSLog(@"test");
-            [peripheral readValueForCharacteristic:characteristic];
+        if([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUID_TX]]){
+            self.txcharacteristic = characteristic;
+            NSLog(@"TX Characteristic");
+        }
+        else if([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUID_RX]]){
+            self.rxcharacteristic = characteristic;
+            NSLog(@"RX Characteristic");
+            
+            // 書き込みデータ生成
+            unsigned char value = 0x01;
+            NSData *data = [[NSData alloc] initWithBytes:&value length:1];
+            
+            // 書き込む（iPhone >> BLESerial2）
+            [self.peripheral writeValue:data forCharacteristic:self.rxcharacteristic type:CBCharacteristicWriteWithResponse];
         }
     }
 }
@@ -132,6 +146,15 @@ didWriteValueForCharacteristic:(CBCharacteristic *)characteristic
              error:(NSError *)error
 {
     NSLog(@"データ読み出し成功！ service uuid:%@, characteristic uuid:%@, value%@",characteristic.service.UUID, characteristic.UUID, characteristic.value);
+}
+
+- (bool)writeWithoutResponse:(CBCharacteristic*)characteristic value:(NSData*)data
+{
+    if(characteristic) {
+        [self.peripheral writeValue:data forCharacteristic:characteristic type:CBCharacteristicWriteWithoutResponse];
+        return TRUE;
+    }
+    return FALSE;
 }
 
 #pragma mark Buttons
@@ -149,6 +172,13 @@ didWriteValueForCharacteristic:(CBCharacteristic *)characteristic
     [self.centralManager cancelPeripheralConnection:self.peripheral];
 }
 
+- (IBAction)sendHigh:(id)sender {
+
+}
+
+- (IBAction)sendLow:(id)sender {
+
+}
 
 
 

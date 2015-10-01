@@ -32,7 +32,8 @@
     // Dispose of any resources that can be recreated.
 }
 
-//
+#pragma mark
+
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central{
     NSLog(@"state:%ld",(long)central.state);
     
@@ -46,6 +47,9 @@
     }
 }
 
+
+#pragma mark Scan and Connect Peripheral
+
 // BLEデバイスが見つかった時に呼ばれる
 -(void) centralManager:(CBCentralManager *)central
  didDiscoverPeripheral:(CBPeripheral *)peripheral
@@ -58,6 +62,18 @@
     // 接続開始
     [self.centralManager connectPeripheral:peripheral options:nil];
 }
+
+// Peripheralへの接続が失敗すると呼ばれる
+-(void)centralManager:(CBCentralManager *)central
+didFailToConnectPeripheral:(CBPeripheral *)peripheral
+                error:(NSError *)error
+{
+    NSLog(@"接続失敗");
+    [self.centralManager stopScan];
+    NSLog(@"Scan停止");
+}
+
+#pragma mark Find Services
 
 // Peripheralへの接続が成功すると呼ばれる
 -(void) centralManager:(CBCentralManager *)central
@@ -76,17 +92,10 @@
     [peripheral discoverServices:nil];
 }
 
-// Peripheralへの接続が失敗すると呼ばれる
--(void)centralManager:(CBCentralManager *)central
-didFailToConnectPeripheral:(CBPeripheral *)peripheral
-                error:(NSError *)error
-{
-    NSLog(@"接続失敗");
-    [self.centralManager stopScan];
-    NSLog(@"Scan停止");
-}
 
-// サービス探索結果を受け取る
+#pragma mark Find Characteristics
+
+// サービス発見時に呼ばれる
 -(void) peripheral:(CBPeripheral *)peripheral
 didDiscoverServices:(NSError *)error
 {
@@ -100,14 +109,32 @@ didDiscoverServices:(NSError *)error
     }
 }
 
-// キャラクタリスティック探索結果を取得する
+// キャラクタリスティック発見時に呼ばれる
 -(void) peripheral:(CBPeripheral *)peripheral
 didDiscoverCharacteristicsForService:(CBService *)service
              error:(NSError *)error
 {
     NSArray *characteristics = service.characteristics;
     NSLog(@"%lu 個のキャラクタリスティックを発見！%@", (unsigned long)characteristics.count, characteristics);
+    
+    for(CBCharacteristic *characteristic in characteristics){
+        // プロパティがReadのとき読み出し開始
+        if(characteristic.properties == CBCharacteristicPropertyRead){
+            NSLog(@"test");
+            [peripheral readValueForCharacteristic:characteristic];
+        }
+    }
 }
+
+// キャラクタリステイックからデータの読み出しが行われた時に呼ばれる
+-(void) peripheral:(CBPeripheral *)peripheral
+didWriteValueForCharacteristic:(CBCharacteristic *)characteristic
+             error:(NSError *)error
+{
+    NSLog(@"データ読み出し成功！ service uuid:%@, characteristic uuid:%@, value%@",characteristic.service.UUID, characteristic.UUID, characteristic.value);
+}
+
+#pragma mark Buttons
 
 // Scanボタン
 - (IBAction)scanButton:(id)sender {
@@ -118,8 +145,8 @@ didDiscoverCharacteristicsForService:(CBService *)service
 
 // Stopボタン
 - (IBAction)stopButton:(id)sender {
-    NSLog(@"Scan停止");
-    [self.centralManager stopScan];
+    NSLog(@"接続解除");
+    [self.centralManager cancelPeripheralConnection:self.peripheral];
 }
 
 

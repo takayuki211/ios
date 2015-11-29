@@ -13,5 +13,8 @@
 - (IBAction)scanButton:(id)sender;
 - (IBAction)stopButton:(id)sender;
 
+- (IBAction)sendHigh:(id)sender;
+- (IBAction)sendLow:(id)sender;
+
 @end
 

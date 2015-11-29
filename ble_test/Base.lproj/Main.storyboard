@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -12,12 +13,13 @@
                         <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
                         <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                    <view key="view" contentMode="scaleToFill" horizontalCompressionResistancePriority="600" verticalCompressionResistancePriority="600" id="kh9-bI-dsS">
+                        <rect key="frame" x="0.0" y="0.0" width="750" height="1334"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2Ox-FQ-hAS">
-                                <rect key="frame" x="0.0" y="556" width="600" height="44"/>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="300" translatesAutoresizingMaskIntoConstraints="NO" id="2Ox-FQ-hAS">
+                                <rect key="frame" x="0.0" y="1290" width="750" height="44"/>
+                                <animations/>
                                 <items>
                                     <barButtonItem title="Connect" id="5ZZ-tI-HgQ">
                                         <connections>
@@ -29,24 +31,42 @@
                                             <action selector="stopButton:" destination="vXZ-lx-hvc" id="nA4-Z9-gTa"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="HIGH" id="38r-v5-Ppf">
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="kme-oU-UK8"/>
+                                    <barButtonItem title="write 1" id="38r-v5-Ppf">
                                         <connections>
                                             <action selector="sendHigh:" destination="vXZ-lx-hvc" id="1dK-yT-UeT"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="LOW" id="GS6-0K-kqT">
+                                    <barButtonItem title="write 0" id="GS6-0K-kqT">
                                         <connections>
                                             <action selector="sendLow:" destination="vXZ-lx-hvc" id="C4W-t1-KCO"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem title="read" id="ffM-OI-r6G">
+                                        <connections>
+                                            <action selector="readButton:" destination="vXZ-lx-hvc" id="hr9-MR-X5I"/>
                                         </connections>
                                     </barButtonItem>
                                 </items>
                             </toolbar>
                         </subviews>
+                        <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="2Ox-FQ-hAS" secondAttribute="trailing" constant="-20" id="Qn3-ar-pSZ"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="2Ox-FQ-hAS" secondAttribute="bottom" id="cTA-ed-zwa"/>
+                            <constraint firstItem="2Ox-FQ-hAS" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="dQg-y4-7IQ"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="2Ox-FQ-hAS" secondAttribute="bottom" id="n40-SG-qkW"/>
+                            <constraint firstItem="2Ox-FQ-hAS" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" constant="-20" id="ulK-IR-QR7"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="2Ox-FQ-hAS" secondAttribute="trailing" constant="-20" id="zIq-9X-DOc"/>
+                        </constraints>
                     </view>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="750" height="1334"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="266" y="244"/>
         </scene>
     </scenes>
 </document>

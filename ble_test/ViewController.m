@@ -7,8 +7,8 @@
 //
 
 #define UUID_BLESERIAL2 @"BD011F22-7D3C-0DB6-E441-55873D44EF40"
-#define UUID_TX @"2a750d7d-bd9a-928f-b744-7d5a70cef1f9" //RX
-#define UUID_RX	@"0503b819-c75b-ba9b-3641-6a7f338dd9bd" //TX
+#define UUID_READ @"2a750d7d-bd9a-928f-b744-7d5a70cef1f9" // BLESerialから見て送信：iPhone<-BLESerial
+#define UUID_WRITE	@"0503b819-c75b-ba9b-3641-6a7f338dd9bd" // BLESerialから見て受信：iPhone->BLESerial
 
 #import "ViewController.h"
 
@@ -85,7 +85,8 @@ didFailToConnectPeripheral:(CBPeripheral *)peripheral
     NSLog(@"接続成功！");
     
     // スキャンをストップする
-    [self.centralManager stopScan];
+    if([self.centralManager state] == CBCentralManagerStatePoweredOn)
+        [self.centralManager stopScan];
     NSLog(@"Scan停止");
     
     // サービス探索結果を受け取るためにデリゲートをセット
@@ -122,39 +123,49 @@ didDiscoverCharacteristicsForService:(CBService *)service
     
     // キャラクタリスティックを確保する
     for(CBCharacteristic *characteristic in characteristics){
-        if([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUID_TX]]){
+        if([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUID_READ]]){
             self.txcharacteristic = characteristic;
-            NSLog(@"TX Characteristic");
+            NSLog(@"READ Characteristic TX");
         }
-        else if([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUID_RX]]){
+        else if([characteristic.UUID isEqual:[CBUUID UUIDWithString:UUID_WRITE]]){
             self.rxcharacteristic = characteristic;
-            NSLog(@"RX Characteristic");
+            NSLog(@"WRITE Characteristic RX");
             
-            // 書き込みデータ生成
-            unsigned char value = 0x01;
-            NSData *data = [[NSData alloc] initWithBytes:&value length:1];
-            
-            // 書き込む（iPhone >> BLESerial2）
-            [self.peripheral writeValue:data forCharacteristic:self.rxcharacteristic type:CBCharacteristicWriteWithResponse];
+//            // 書き込む（iPhone >> BLESerial2）
+//            NSUInteger num = 1;
+//            NSData *data = [NSData dataWithBytes:&num length:sizeof(num)];
+//            [self.peripheral writeValue:data forCharacteristic:self.rxcharacteristic type:CBCharacteristicWriteWithResponse];
         }
     }
 }
 
-// キャラクタリステイックからデータの読み出しが行われた時に呼ばれる
+
+#pragma mark Responce Data Read/Write
+
+// キャラクタリステイックからデータを読み出した時に呼ばれる
+-(void) peripheral:(CBPeripheral *)peripheral
+didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
+             error:(NSError *)error
+{
+    if (error) {
+        NSLog(@"Error reading characteristic value: %@",[error localizedDescription]);
+    }
+    else{
+        NSLog(@"データ読み出し成功！ service uuid:%@, characteristic uuid:%@, value%@",characteristic.service.UUID, characteristic.UUID, characteristic.value);
+    }
+}
+
+// キャラクタリステイックにデータを書き込んだ時に呼ばれる
 -(void) peripheral:(CBPeripheral *)peripheral
 didWriteValueForCharacteristic:(CBCharacteristic *)characteristic
              error:(NSError *)error
 {
-    NSLog(@"データ読み出し成功！ service uuid:%@, characteristic uuid:%@, value%@",characteristic.service.UUID, characteristic.UUID, characteristic.value);
-}
-
-- (bool)writeWithoutResponse:(CBCharacteristic*)characteristic value:(NSData*)data
-{
-    if(characteristic) {
-        [self.peripheral writeValue:data forCharacteristic:characteristic type:CBCharacteristicWriteWithoutResponse];
-        return TRUE;
+    if (error) {
+        NSLog(@"Error writing characteristic value: %@",[error localizedDescription]);
     }
-    return FALSE;
+    else{
+        NSLog(@"データ書き込み成功！");
+    }
 }
 
 #pragma mark Buttons
@@ -172,14 +183,36 @@ didWriteValueForCharacteristic:(CBCharacteristic *)characteristic
     [self.centralManager cancelPeripheralConnection:self.peripheral];
 }
 
+
+// Wtite 1
 - (IBAction)sendHigh:(id)sender {
-
+    if (self.peripheral){
+        uint8_t	buf[1];
+        buf[0]=1;
+        NSData*	data = [NSData dataWithBytes:&buf length:sizeof(buf)];
+        if (self.rxcharacteristic)	{
+            [self.peripheral writeValue:data forCharacteristic:self.rxcharacteristic type:CBCharacteristicWriteWithoutResponse];
+            NSLog(@"書き込み実行：1");
+        }
+    }
 }
 
+// Weite 0
 - (IBAction)sendLow:(id)sender {
-
+    if (self.peripheral){
+        uint8_t	buf[1];
+        buf[0]=0;
+        NSData*	data = [NSData dataWithBytes:&buf length:sizeof(buf)];
+        if (self.rxcharacteristic)	{
+            [self.peripheral writeValue:data forCharacteristic:self.rxcharacteristic type:CBCharacteristicWriteWithoutResponse];
+            NSLog(@"書き込み実行：0");
+        }
+    }
 }
 
+- (IBAction)readButton:(id)sender {
 
+    
+}
 
 @end
